@@ -79,8 +79,15 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         createdAt: new Date(),
         total: getTotal(),
       };
-      setOrders((prev) => [...prev, newOrder]);
+      console.log("Submitting order:", newOrder);
+      setOrders((prev) => {
+        const updatedOrders = [...prev, newOrder];
+        console.log("Orders after submit:", updatedOrders);
+        return updatedOrders;
+      });
       clearOrder();
+    } else {
+      console.log("Cannot submit order:", { customer, orderItems: orderItems.length, paymentMethod });
     }
   };
 

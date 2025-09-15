@@ -9,6 +9,8 @@ import { OrderStatus } from "@/types/menu";
 const StaffDashboard = () => {
   const { orders, updateOrderStatus } = useOrder();
   const [filter, setFilter] = useState<"recent" | "all">("recent");
+  
+  console.log("Staff Dashboard - All orders:", orders);
 
   const filteredOrders = orders.filter((order) => {
     if (filter === "recent") {
@@ -16,6 +18,8 @@ const StaffDashboard = () => {
     }
     return true;
   });
+  
+  console.log("Filtered orders:", filteredOrders);
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -52,41 +56,38 @@ const StaffDashboard = () => {
     switch (order.status) {
       case "pending":
         return (
-          <Button
+          <button
             onClick={() => handleStatusChange(order.id, "preparing")}
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+            className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-teal-500/30"
           >
             Iniciar Preparo
-          </Button>
+          </button>
         );
       case "preparing":
         return (
-          <Button
+          <button
             onClick={() => handleStatusChange(order.id, "ready")}
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+            className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-teal-500/30"
           >
             Finalizar
-          </Button>
+          </button>
         );
       case "ready":
         return (
-          <div className="flex gap-2">
-            <Button
+          <div className="flex gap-3">
+            <button
               onClick={() => handleStatusChange(order.id, "preparing")}
-              variant="outline"
-              className="flex-1 border-teal-600 text-teal-600 hover:bg-teal-50"
+              className="flex-1 border-2 border-teal-600 text-teal-400 hover:bg-teal-500/10 font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
             >
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              Voltar para preparo
-            </Button>
-            <Button
+              <ArrowLeft className="w-4 h-4" />
+              Voltar
+            </button>
+            <button
               onClick={() => handleStatusChange(order.id, "completed")}
-              variant="outline"
-              size="icon"
-              className="border-red-500 text-red-500 hover:bg-red-50"
+              className="border-2 border-red-500 text-red-400 hover:bg-red-500/10 font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105"
             >
               <Trash2 className="w-4 h-4" />
-            </Button>
+            </button>
           </div>
         );
       case "completed":
@@ -97,104 +98,133 @@ const StaffDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold text-white text-center mb-6">
-            PEDIDOS
-            <div className="w-24 h-1 bg-red-500 mx-auto mt-2"></div>
-          </h1>
+        <header className="mb-8 animate-fade-in">
+          <div className="text-center mb-8">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+              PEDIDOS
+            </h1>
+            <div className="w-32 h-1 bg-gradient-to-r from-red-500 to-red-600 mx-auto rounded-full shadow-lg shadow-red-500/30"></div>
+          </div>
           
-          <div className="flex justify-center gap-4">
-            <Button
+          <div className="flex justify-center gap-4 mb-6">
+            <button
               onClick={() => setFilter("recent")}
-              variant={filter === "recent" ? "default" : "outline"}
-              className={`px-6 py-3 font-semibold ${
+              className={`px-8 py-4 font-bold text-sm uppercase tracking-wider rounded-xl transition-all duration-300 transform hover:scale-105 ${
                 filter === "recent"
-                  ? "bg-red-600 hover:bg-red-700 text-white"
-                  : "border-red-600 text-red-600 hover:bg-red-50"
+                  ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30 scale-105"
+                  : "bg-slate-700/50 text-red-400 border border-red-500/30 hover:bg-red-500/10 backdrop-blur-sm"
               }`}
             >
               MAIS RECENTES
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={() => setFilter("all")}
-              variant={filter === "all" ? "default" : "outline"}
-              className={`px-6 py-3 font-semibold ${
+              className={`px-8 py-4 font-bold text-sm uppercase tracking-wider rounded-xl transition-all duration-300 transform hover:scale-105 ${
                 filter === "all"
-                  ? "bg-red-600 hover:bg-red-700 text-white"
-                  : "border-red-600 text-red-600 hover:bg-red-50"
+                  ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/30 scale-105"
+                  : "bg-slate-700/50 text-red-400 border border-red-500/30 hover:bg-red-500/10 backdrop-blur-sm"
               }`}
             >
-              ATUALIZAR
-            </Button>
+              TODOS
+            </button>
+          </div>
+
+          <div className="text-center">
+            <p className="text-slate-400 text-lg">
+              Total de pedidos: <span className="text-white font-semibold">{orders.length}</span>
+            </p>
+            <p className="text-slate-400">
+              Filtrados: <span className="text-white font-semibold">{filteredOrders.length}</span>
+            </p>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredOrders.map((order) => (
-            <Card key={order.id} className="bg-gray-700 border-gray-600 overflow-hidden">
-              <div className="p-6">
-                <div className="bg-slate-800 rounded-lg p-4 mb-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="text-white font-semibold text-lg">Pedido</h3>
-                      <p className="text-gray-300 font-medium">
-                        {order.customer.name.toUpperCase()} - {order.id.slice(-3)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {order.status === "pending" && (
-                        <div className="flex items-center bg-yellow-500 text-black px-2 py-1 rounded text-sm font-medium">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {getTimeElapsed(order.createdAt)}
-                        </div>
-                      )}
-                      {order.status === "ready" && (
-                        <div className="flex items-center bg-green-500 text-white px-2 py-1 rounded text-sm font-medium">
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          Pedido pronto
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <ul className="text-gray-300 mb-4 space-y-1">
-                    {order.items.map((item, index) => (
-                      <li key={index} className="flex justify-between">
-                        <span>• {item.name}</span>
-                        {item.quantity > 1 && (
-                          <span className="text-gray-400">x{item.quantity}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredOrders.map((order, index) => (
+            <div 
+              key={order.id} 
+              className="animate-fade-in hover-scale group"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl overflow-hidden border border-slate-600/50 shadow-xl shadow-slate-900/50 backdrop-blur-sm group-hover:shadow-2xl group-hover:shadow-slate-900/70 transition-all duration-300">
+                <div className="p-6">
+                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 mb-6 border border-slate-600/30">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-white font-bold text-lg mb-1">Pedido</h3>
+                        <p className="text-slate-300 font-semibold text-base">
+                          {order.customer.name.toUpperCase()} - #{order.id.slice(-3)}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        {order.status === "pending" && (
+                          <div className="flex items-center bg-gradient-to-r from-yellow-500 to-amber-500 text-black px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg shadow-yellow-500/30">
+                            <Clock className="w-4 h-4 mr-1.5" />
+                            {getTimeElapsed(order.createdAt)}
+                          </div>
                         )}
-                      </li>
-                    ))}
-                  </ul>
+                        {order.status === "ready" && (
+                          <div className="flex items-center bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg shadow-green-500/30 animate-pulse">
+                            <CheckCircle className="w-4 h-4 mr-1.5" />
+                            Pedido pronto
+                          </div>
+                        )}
+                        {getStatusBadge(order.status)}
+                      </div>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <h4 className="text-slate-400 text-sm font-medium mb-2">Itens:</h4>
+                      <ul className="space-y-1">
+                        {order.items.map((item, index) => (
+                          <li key={index} className="flex justify-between items-center text-slate-300 bg-slate-800/50 rounded-lg px-3 py-2">
+                            <span className="font-medium">• {item.name}</span>
+                            {item.quantity > 1 && (
+                              <span className="text-slate-400 bg-slate-700 px-2 py-1 rounded text-xs font-bold">
+                                x{item.quantity}
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-gray-400">Total:</span>
-                    <span className="text-white font-semibold">
-                      R$ {order.total.toFixed(2)}
-                    </span>
+                    <div className="space-y-3 mb-4">
+                      <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                        <span className="text-slate-400 font-medium">Total:</span>
+                        <span className="text-white font-bold text-lg">
+                          R$ {order.total.toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                        <span className="text-slate-400 font-medium">Pagamento:</span>
+                        <span className="text-white font-semibold">{order.paymentMethod}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-gray-400">Pagamento:</span>
-                    <span className="text-white">{order.paymentMethod}</span>
-                  </div>
-
-                  {getStatusBadge(order.status)}
+                  {getActionButton(order)}
                 </div>
-
-                {getActionButton(order)}
               </div>
-            </Card>
+            </div>
           ))}
         </div>
 
         {filteredOrders.length === 0 && (
-          <div className="text-center text-gray-400 mt-12">
-            <p className="text-xl">Nenhum pedido encontrado</p>
-            <p className="mt-2">Os pedidos aparecerão aqui quando forem realizados</p>
+          <div className="text-center mt-16 animate-fade-in">
+            <div className="bg-slate-800/50 rounded-2xl p-12 border border-slate-600/30 backdrop-blur-sm">
+              <div className="text-6xl mb-6">🍽️</div>
+              <h3 className="text-2xl font-bold text-white mb-4">Nenhum pedido encontrado</h3>
+              <p className="text-slate-400 text-lg mb-2">
+                {filter === "recent" 
+                  ? "Não há pedidos pendentes ou em preparo no momento" 
+                  : "Nenhum pedido foi realizado ainda"}
+              </p>
+              <p className="text-slate-500">Os pedidos aparecerão aqui automaticamente</p>
+            </div>
           </div>
         )}
       </div>

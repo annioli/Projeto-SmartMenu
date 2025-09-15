@@ -25,8 +25,7 @@ const OrderReview = () => {
   };
 
   if (orderItems.length === 0) {
-    navigate("/menu");
-    return null;
+    return null; // Don't navigate immediately, let the user see the page
   }
 
   return (
