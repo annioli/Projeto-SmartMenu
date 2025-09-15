@@ -1,10 +1,11 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { OrderItem, Customer, PaymentMethod } from "@/types/menu";
+import { OrderItem, Customer, PaymentMethod, Order, OrderStatus } from "@/types/menu";
 
 interface OrderContextType {
   customer: Customer | null;
   orderItems: OrderItem[];
   paymentMethod: PaymentMethod | null;
+  orders: Order[];
   setCustomer: (customer: Customer) => void;
   addItem: (item: OrderItem) => void;
   removeItem: (itemId: string) => void;
@@ -12,6 +13,8 @@ interface OrderContextType {
   setPaymentMethod: (method: PaymentMethod) => void;
   clearOrder: () => void;
   getTotal: () => number;
+  submitOrder: () => void;
+  updateOrderStatus: (orderId: string, status: OrderStatus) => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -28,6 +31,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   const addItem = (item: OrderItem) => {
     setOrderItems((prev) => {
@@ -64,12 +68,37 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     return orderItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  const submitOrder = () => {
+    if (customer && orderItems.length > 0 && paymentMethod) {
+      const newOrder: Order = {
+        id: Date.now().toString(),
+        customer,
+        items: [...orderItems],
+        paymentMethod,
+        status: "pending",
+        createdAt: new Date(),
+        total: getTotal(),
+      };
+      setOrders((prev) => [...prev, newOrder]);
+      clearOrder();
+    }
+  };
+
+  const updateOrderStatus = (orderId: string, status: OrderStatus) => {
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.id === orderId ? { ...order, status } : order
+      )
+    );
+  };
+
   return (
     <OrderContext.Provider
       value={{
         customer,
         orderItems,
         paymentMethod,
+        orders,
         setCustomer,
         addItem,
         removeItem,
@@ -77,6 +106,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         setPaymentMethod,
         clearOrder,
         getTotal,
+        submitOrder,
+        updateOrderStatus,
       }}
     >
       {children}

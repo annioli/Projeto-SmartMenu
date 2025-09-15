@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 const OrderReview = () => {
   const navigate = useNavigate();
-  const { orderItems, paymentMethod, setPaymentMethod, getTotal, clearOrder, removeItem } = useOrder();
+  const { orderItems, paymentMethod, setPaymentMethod, getTotal, clearOrder, removeItem, submitOrder } = useOrder();
 
   const handlePaymentSelect = (method: PaymentMethod) => {
     setPaymentMethod(method);
@@ -19,8 +19,8 @@ const OrderReview = () => {
       return;
     }
     
+    submitOrder();
     toast.success("Pedido realizado com sucesso!");
-    clearOrder();
     navigate("/");
   };
 
