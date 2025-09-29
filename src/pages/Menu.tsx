@@ -22,9 +22,9 @@ const Menu = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-gray-50 to-background">
+    <div className="min-h-screen bg-background">
       {/* Header com gradiente vermelho aprimorado */}
-      <div className="bg-gradient-to-br from-primary via-primary to-secondary pt-12 pb-8 px-6 shadow-2xl">
+      <div className="bg-gradient-to-br from-primary via-primary to-primary/90 pt-12 pb-8 px-6 shadow-2xl">
         <SmartMenuLogo />
       </div>
 
@@ -46,7 +46,7 @@ const Menu = () => {
         {/* Lista de produtos com cards melhorados */}
         <div className="space-y-8 max-w-2xl mx-auto">
           {filteredItems.map((item) => (
-            <div key={item.id} className="bg-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] border border-gray-100">
+            <div key={item.id} className="bg-card rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] border border-border/50">
               {item.image && (
                 <div className="h-52 overflow-hidden">
                   <img

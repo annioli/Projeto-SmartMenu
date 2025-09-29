@@ -19,15 +19,15 @@ const CustomerName = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-gray-50 to-background">
+    <div className="min-h-screen bg-background">
       {/* Header com gradiente vermelho aprimorado */}
-      <div className="bg-gradient-to-br from-primary via-primary to-secondary pt-16 pb-12 px-6 shadow-2xl">
+      <div className="bg-gradient-to-br from-primary via-primary to-primary/90 pt-16 pb-12 px-6 shadow-2xl">
         <SmartMenuLogo />
       </div>
 
       <div className="px-6 py-12">
         <div className="max-w-md mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-2">
+          <h2 className="text-4xl font-bold text-center mb-2 text-foreground">
             FAÇA SEU PEDIDO
           </h2>
           <p className="text-lg text-center text-muted-foreground mb-12">
@@ -35,7 +35,7 @@ const CustomerName = () => {
           </p>
 
           <form onSubmit={handleSubmit}>
-            <div className="bg-gradient-to-br from-secondary via-secondary/95 to-primary rounded-3xl p-8 mb-12 shadow-2xl border border-white/10">
+            <div className="bg-gradient-to-br from-secondary via-secondary/95 to-primary rounded-3xl p-8 mb-12 shadow-2xl border border-border/20">
               <h3 className="text-2xl font-bold text-white mb-6 text-center">
                 Realizar Pedido:
               </h3>
@@ -48,7 +48,7 @@ const CustomerName = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-white/95 backdrop-blur-sm text-gray-800 text-lg p-6 rounded-2xl border-0 shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-primary/50"
+                  className="bg-white text-gray-800 text-lg p-6 rounded-2xl border-0 shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-primary/50"
                   placeholder="Digite seu nome"
                   required
                 />
@@ -59,7 +59,7 @@ const CustomerName = () => {
               <SmartMenuButton
                 type="submit"
                 variant="primary"
-                className="w-64 text-xl"
+                className="w-64 text-xl py-4"
                 disabled={!name.trim()}
               >
                 CONTINUAR

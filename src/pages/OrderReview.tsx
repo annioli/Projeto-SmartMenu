@@ -1,21 +1,35 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, CreditCard, QrCode, Trash2, Check } from "lucide-react";
 import SmartMenuButton from "@/components/SmartMenuButton";
 import { useOrder } from "@/contexts/OrderContext";
 import { PaymentMethod } from "@/types/menu";
+import { PaymentForm, PaymentFormData } from "@/components/PaymentForm";
 import { toast } from "sonner";
 
 const OrderReview = () => {
   const navigate = useNavigate();
   const { orderItems, paymentMethod, setPaymentMethod, getTotal, clearOrder, removeItem, submitOrder } = useOrder();
+  const [paymentData, setPaymentData] = useState<PaymentFormData>({});
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   const handlePaymentSelect = (method: PaymentMethod) => {
     setPaymentMethod(method);
+    setShowPaymentForm(false);
+  };
+
+  const handlePaymentDataChange = (data: PaymentFormData) => {
+    setPaymentData(data);
   };
 
   const handleFinishOrder = () => {
     if (!paymentMethod) {
       toast.error("Selecione uma forma de pagamento");
+      return;
+    }
+    
+    if (!showPaymentForm) {
+      setShowPaymentForm(true);
       return;
     }
     
@@ -29,16 +43,18 @@ const OrderReview = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-secondary/30">
+    <div className="min-h-screen bg-background">
       {/* Header elegante */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-lg border-b border-border/50">
         <div className="flex items-center justify-between p-6 max-w-2xl mx-auto">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Seu Pedido</h1>
-            <p className="text-muted-foreground text-sm">Revise antes de confirmar</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {showPaymentForm ? "FINALIZE SEU PAGAMENTO" : "SEU PEDIDO"}
+            </h1>
+            <p className="text-muted-foreground text-sm">REVISE ANTES DE CONFIRMAR</p>
           </div>
           <button
-            onClick={() => navigate("/menu")}
+            onClick={() => showPaymentForm ? setShowPaymentForm(false) : navigate("/menu")}
             className="p-2 rounded-full hover:bg-accent transition-colors"
           >
             <X className="w-6 h-6 text-muted-foreground" />
@@ -91,89 +107,83 @@ const OrderReview = () => {
           ))}
         </div>
 
-        {/* Total */}
-        <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl p-6 border border-border/50">
-          <div className="flex justify-between items-center">
-            <span className="text-xl font-semibold text-foreground">Total:</span>
-            <span className="text-3xl font-bold text-primary">
-              R$ {getTotal().toFixed(2).replace('.', ',')}
-            </span>
-          </div>
-        </div>
-
-        {/* Formas de pagamento */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-foreground">Forma de Pagamento</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              onClick={() => handlePaymentSelect("PIX")}
-              className={`relative p-6 rounded-2xl border-2 transition-all duration-200 ${
-                paymentMethod === "PIX"
-                  ? "border-primary bg-primary/5 shadow-lg"
-                  : "border-border hover:border-primary/50 bg-card hover:bg-accent/5"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-3 rounded-xl ${
-                  paymentMethod === "PIX" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                  <QrCode className="w-6 h-6" />
-                </div>
-                <div className="text-left">
-                  <h3 className="font-semibold text-foreground">PIX</h3>
-                  <p className="text-sm text-muted-foreground">Pagamento instantâneo</p>
-                </div>
+        {!showPaymentForm && (
+          <>
+            {/* Total */}
+            <div className="text-center space-y-2 mb-8">
+              <span className="text-lg font-semibold text-foreground">TOTAL:</span>
+              <div className="text-4xl font-bold text-foreground">
+                R$ {getTotal().toFixed(2).replace('.', ',')}
               </div>
-              {paymentMethod === "PIX" && (
-                <div className="absolute top-3 right-3">
-                  <div className="bg-primary text-primary-foreground rounded-full p-1">
-                    <Check className="w-4 h-4" />
-                  </div>
-                </div>
-              )}
-            </button>
+            </div>
 
-            <button
-              onClick={() => handlePaymentSelect("CARTAO")}
-              className={`relative p-6 rounded-2xl border-2 transition-all duration-200 ${
-                paymentMethod === "CARTAO"
-                  ? "border-primary bg-primary/5 shadow-lg"
-                  : "border-border hover:border-primary/50 bg-card hover:bg-accent/5"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-3 rounded-xl ${
-                  paymentMethod === "CARTAO" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                  <CreditCard className="w-6 h-6" />
-                </div>
-                <div className="text-left">
-                  <h3 className="font-semibold text-foreground">Cartão de Crédito</h3>
-                  <p className="text-sm text-muted-foreground">Débito ou crédito</p>
-                </div>
+            {/* Formas de pagamento */}
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button
+                  onClick={() => handlePaymentSelect("PIX")}
+                  className={`relative p-8 rounded-3xl border-2 transition-all duration-200 ${
+                    paymentMethod === "PIX"
+                      ? "bg-gradient-to-br from-primary to-primary/80 border-primary text-white"
+                      : "bg-gradient-to-br from-primary to-primary/80 border-primary/50 hover:border-primary text-white"
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="p-3 rounded-xl bg-white/20">
+                      <QrCode className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-bold text-xl">PIX</h3>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handlePaymentSelect("CARTAO")}
+                  className={`relative p-8 rounded-3xl border-2 transition-all duration-200 ${
+                    paymentMethod === "CARTAO"
+                      ? "bg-gradient-to-br from-primary to-primary/80 border-primary text-white"
+                      : "bg-gradient-to-br from-primary to-primary/80 border-primary/50 hover:border-primary text-white"
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="p-3 rounded-xl bg-white/20">
+                      <CreditCard className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-bold text-xl">CARTÃO DE</h3>
+                    <h3 className="font-bold text-xl -mt-2">CRÉDITO</h3>
+                  </div>
+                </button>
               </div>
-              {paymentMethod === "CARTAO" && (
-                <div className="absolute top-3 right-3">
-                  <div className="bg-primary text-primary-foreground rounded-full p-1">
-                    <Check className="w-4 h-4" />
-                  </div>
-                </div>
-              )}
-            </button>
-          </div>
-        </div>
+            </div>
 
-        {/* Botão finalizar */}
-        <div className="sticky bottom-6">
-          <SmartMenuButton
-            variant="primary"
-            className="w-full py-4 text-lg font-semibold shadow-lg"
-            onClick={handleFinishOrder}
-            disabled={!paymentMethod}
-          >
-            {paymentMethod ? "Finalizar Pedido" : "Selecione uma forma de pagamento"}
-          </SmartMenuButton>
-        </div>
+            {/* Botão de ação */}
+            <div className="grid grid-cols-2 gap-4 mt-8">
+              <SmartMenuButton
+                variant="secondary"
+                className="py-4 text-lg font-bold"
+                onClick={() => navigate("/menu")}
+              >
+                VOLTAR
+              </SmartMenuButton>
+              <SmartMenuButton
+                variant="primary"
+                className="py-4 text-lg font-bold"
+                onClick={handleFinishOrder}
+                disabled={!paymentMethod}
+              >
+                FINALIZAR PEDIDO
+              </SmartMenuButton>
+            </div>
+          </>
+        )}
+
+        {/* Formulário de pagamento */}
+        {showPaymentForm && paymentMethod && (
+          <PaymentForm
+            paymentMethod={paymentMethod}
+            onPaymentDataChange={handlePaymentDataChange}
+            onSubmit={handleFinishOrder}
+          />
+        )}
       </div>
     </div>
   );
