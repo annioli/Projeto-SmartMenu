@@ -73,7 +73,7 @@ const AdminDashboard = () => {
   const stats = {
     total: orders.length,
     pending: orders.filter(o => o.status === "pending").length,
-    preparing: orders.filter(o => o.status === "preparing").length,
+    cancelled: orders.filter(o => o.status === "cancelled").length,
     ready: orders.filter(o => o.status === "ready").length,
     revenue: orders.reduce((sum, o) => sum + o.total, 0),
   };
@@ -83,14 +83,16 @@ const AdminDashboard = () => {
       pending: "bg-gradient-to-r from-amber-500 to-orange-600 text-black",
       preparing: "bg-gradient-to-r from-blue-600 to-purple-600 text-white",
       ready: "bg-gradient-to-r from-green-500 to-emerald-600 text-white",
-      completed: "bg-gradient-to-r from-zinc-600 to-zinc-700 text-white"
+      completed: "bg-gradient-to-r from-zinc-600 to-zinc-700 text-white",
+      cancelled: "bg-gradient-to-r from-red-600 to-red-800 text-white"
     };
 
     const labels = {
       pending: "Pendente",
       preparing: "Preparando",
       ready: "Pronto",
-      completed: "Finalizado"
+      completed: "Finalizado",
+      cancelled: "Cancelado"
     };
 
     return (
@@ -145,6 +147,16 @@ const AdminDashboard = () => {
       </header>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
+        {/* Unofficial Results Warning */}
+        <div className="mb-6 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 rounded-2xl p-4 backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
+            <p className="text-amber-200 font-semibold">
+              ⚠️ Estes são resultados não oficiais
+            </p>
+          </div>
+        </div>
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
           <div className="bg-zinc-900/80 backdrop-blur-xl border border-red-900/30 rounded-2xl p-6">
@@ -163,12 +175,12 @@ const AdminDashboard = () => {
             <p className="text-3xl font-black text-amber-500">{stats.pending}</p>
           </div>
 
-          <div className="bg-zinc-900/80 backdrop-blur-xl border border-blue-900/30 rounded-2xl p-6">
+          <div className="bg-zinc-900/80 backdrop-blur-xl border border-red-900/30 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-2">
-              <ChefHat className="w-5 h-5 text-blue-500" />
-              <span className="text-zinc-400 text-sm">Preparando</span>
+              <Users className="w-5 h-5 text-red-500" />
+              <span className="text-zinc-400 text-sm">Cancelados</span>
             </div>
-            <p className="text-3xl font-black text-blue-500">{stats.preparing}</p>
+            <p className="text-3xl font-black text-red-500">{stats.cancelled}</p>
           </div>
 
           <div className="bg-zinc-900/80 backdrop-blur-xl border border-green-900/30 rounded-2xl p-6">

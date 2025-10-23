@@ -17,7 +17,7 @@ export interface Customer {
 
 export type PaymentMethod = "PIX" | "CARTAO";
 
-export type OrderStatus = "pending" | "preparing" | "ready" | "completed";
+export type OrderStatus = "pending" | "preparing" | "ready" | "completed" | "cancelled";
 
 export interface Order {
   id: string;
