@@ -12,34 +12,61 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      if (isSignUp) {
+        // Sign up
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/admin/dashboard`
+          }
+        });
 
-      if (authError) throw authError;
+        if (authError) throw authError;
 
-      // Check if user has admin role
-      const { data: roleData, error: roleError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", authData.user.id)
-        .eq("role", "admin")
-        .single();
+        toast.success("Conta criada com sucesso! Fazendo login...");
+        
+        // Auto login after signup
+        const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-      if (roleError || !roleData) {
-        await supabase.auth.signOut();
-        throw new Error("Acesso negado. Você não possui permissão de administrador.");
+        if (loginError) throw loginError;
+
+        navigate("/admin/dashboard");
+      } else {
+        // Sign in
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (authError) throw authError;
+
+        // Check if user has admin role
+        const { data: roleData, error: roleError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", authData.user.id)
+          .eq("role", "admin")
+          .single();
+
+        if (roleError || !roleData) {
+          await supabase.auth.signOut();
+          throw new Error("Acesso negado. Você não possui permissão de administrador.");
+        }
+
+        toast.success("Login realizado com sucesso!");
+        navigate("/admin/dashboard");
       }
-
-      toast.success("Login realizado com sucesso!");
-      navigate("/admin/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Erro ao fazer login");
     } finally {
@@ -67,7 +94,7 @@ const AdminLogin = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-zinc-300 flex items-center gap-2">
                 <User className="w-4 h-4" />
@@ -106,14 +133,24 @@ const AdminLogin = () => {
               className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-6 rounded-xl shadow-lg shadow-red-900/50 transition-all duration-300 hover:scale-105"
             >
               {loading ? (
-                "Entrando..."
+                isSignUp ? "Criando conta..." : "Entrando..."
               ) : (
                 <span className="flex items-center justify-center gap-2">
                   <LogIn className="w-5 h-5" />
-                  ENTRAR
+                  {isSignUp ? "CRIAR CONTA" : "ENTRAR"}
                 </span>
               )}
             </Button>
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-red-400 hover:text-red-300 text-sm transition-colors"
+              >
+                {isSignUp ? "Já tem uma conta? Entrar" : "Primeiro acesso? Criar conta"}
+              </button>
+            </div>
           </form>
         </div>
       </div>
