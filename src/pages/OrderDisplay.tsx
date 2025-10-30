@@ -7,6 +7,59 @@ const OrderDisplay = () => {
   const { orders } = useOrder();
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Example orders for demonstration
+  const exampleOrders: Order[] = [
+    {
+      id: "0182",
+      customer: { name: "Gabriel" },
+      items: [
+        { id: "1", name: "Hamburguer Artesanal", description: "", price: 24.50, category: "LANCHES", quantity: 2 },
+        { id: "2", name: "Coca-Cola", description: "", price: 5.00, category: "BEBIDAS", quantity: 1 }
+      ],
+      paymentMethod: "PIX",
+      status: "preparing",
+      createdAt: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+      total: 54.00
+    },
+    {
+      id: "0183",
+      customer: { name: "Maria" },
+      items: [
+        { id: "3", name: "X-Bacon", description: "", price: 18.00, category: "LANCHES", quantity: 1 }
+      ],
+      paymentMethod: "CARTAO",
+      status: "preparing",
+      createdAt: new Date(Date.now() - 3 * 60 * 1000), // 3 minutes ago
+      total: 18.00
+    },
+    {
+      id: "0184",
+      customer: { name: "João" },
+      items: [
+        { id: "4", name: "Prato Feito", description: "", price: 16.00, category: "ALMOÇO", quantity: 1 },
+        { id: "5", name: "Suco de Laranja", description: "", price: 7.50, category: "BEBIDAS", quantity: 1 }
+      ],
+      paymentMethod: "PIX",
+      status: "ready",
+      createdAt: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
+      total: 23.50
+    },
+    {
+      id: "0185",
+      customer: { name: "Ana" },
+      items: [
+        { id: "6", name: "X-Tudo", description: "", price: 22.00, category: "LANCHES", quantity: 1 }
+      ],
+      paymentMethod: "CARTAO",
+      status: "ready",
+      createdAt: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
+      total: 22.00
+    }
+  ];
+
+  // Use real orders if available, otherwise use examples
+  const displayOrders = orders.length > 0 ? orders : exampleOrders;
+
   useEffect(() => {
     // Update current time every second for live timer
     const timer = setInterval(() => {
@@ -23,8 +76,8 @@ const OrderDisplay = () => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const preparingOrders = orders.filter((o) => o.status === "preparing");
-  const readyOrders = orders.filter((o) => o.status === "ready");
+  const preparingOrders = displayOrders.filter((o) => o.status === "preparing");
+  const readyOrders = displayOrders.filter((o) => o.status === "ready");
 
   const OrderCard = ({ order, isReady }: { order: Order; isReady: boolean }) => (
     <Card className="border-2 mb-4 bg-card hover:shadow-lg transition-shadow">
