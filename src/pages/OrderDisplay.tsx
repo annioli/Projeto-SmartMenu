@@ -80,21 +80,21 @@ const OrderDisplay = () => {
   const readyOrders = displayOrders.filter((o) => o.status === "ready");
 
   const OrderCard = ({ order, isReady }: { order: Order; isReady: boolean }) => (
-    <Card className="border-2 mb-4 bg-card hover:shadow-lg transition-shadow">
-      <CardContent className="p-6">
-        <div className="text-center space-y-3">
-          <div className="text-4xl font-bold text-primary">
+    <Card className="border border-border/50 mb-6 bg-card/50 backdrop-blur-sm">
+      <CardContent className="p-8">
+        <div className="text-center space-y-4">
+          <div className="text-6xl font-bold text-destructive tracking-tight">
             #{order.id.slice(-4)}
           </div>
-          <div className="text-2xl font-semibold">
+          <div className="text-3xl font-semibold text-foreground">
             {order.customer.name}
           </div>
           {!isReady && (
-            <div className="text-5xl font-mono font-bold text-foreground">
+            <div className="text-7xl font-mono font-bold text-foreground tabular-nums">
               {getElapsedTime(order)}
             </div>
           )}
-          <div className="text-sm text-muted-foreground">
+          <div className="text-base text-muted-foreground uppercase tracking-wide">
             {isReady ? "pedido finalizado" : "pedido em preparo"}
           </div>
         </div>
@@ -103,26 +103,26 @@ const OrderDisplay = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold text-center mb-12 text-primary">
+    <div className="min-h-screen bg-background p-10">
+      <div className="max-w-[1800px] mx-auto">
+        <h1 className="text-6xl font-bold text-center mb-16 text-destructive uppercase tracking-wide">
           ACOMPANHE SEU PEDIDO
         </h1>
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 gap-12">
           {/* Left side - Preparing orders */}
-          <div>
-            <h2 className="text-3xl font-bold mb-6 text-center text-foreground">
+          <div className="space-y-6">
+            <h2 className="text-5xl font-bold mb-8 text-center text-foreground uppercase tracking-wide border-b-4 border-primary pb-4">
               EM PREPARO
             </h2>
             {preparingOrders.length === 0 ? (
-              <Card className="text-center p-8">
-                <p className="text-xl text-muted-foreground">
+              <Card className="text-center p-12 bg-card/30">
+                <p className="text-2xl text-muted-foreground">
                   Nenhum pedido em preparo
                 </p>
               </Card>
             ) : (
-              <div>
+              <div className="space-y-6">
                 {preparingOrders.map((order) => (
                   <OrderCard key={order.id} order={order} isReady={false} />
                 ))}
@@ -131,18 +131,18 @@ const OrderDisplay = () => {
           </div>
 
           {/* Right side - Ready orders */}
-          <div>
-            <h2 className="text-3xl font-bold mb-6 text-center text-foreground">
+          <div className="space-y-6">
+            <h2 className="text-5xl font-bold mb-8 text-center text-foreground uppercase tracking-wide border-b-4 border-accent pb-4">
               PRONTOS
             </h2>
             {readyOrders.length === 0 ? (
-              <Card className="text-center p-8">
-                <p className="text-xl text-muted-foreground">
+              <Card className="text-center p-12 bg-card/30">
+                <p className="text-2xl text-muted-foreground">
                   Nenhum pedido pronto
                 </p>
               </Card>
             ) : (
-              <div>
+              <div className="space-y-6">
                 {readyOrders.map((order) => (
                   <OrderCard key={order.id} order={order} isReady={true} />
                 ))}
